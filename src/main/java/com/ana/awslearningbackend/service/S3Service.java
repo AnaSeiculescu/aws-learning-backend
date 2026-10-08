@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 
@@ -32,5 +34,25 @@ public class S3Service {
                 request,
                 RequestBody.fromBytes(fileContent)
         );
+    }
+
+    public byte[] downloadFile(String fileName) {
+        GetObjectRequest request = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .build();
+
+        return s3Client.getObjectAsBytes(request)
+                .asByteArray();
+    }
+
+    public void deleteFile(String fileName) {
+
+        DeleteObjectRequest request = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .build();
+
+        s3Client.deleteObject(request);
     }
 }
